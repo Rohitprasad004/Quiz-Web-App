@@ -1,102 +1,106 @@
 const questions = [
-  {
-    question: "What is the capital of France?",
-    options: ["Berlin", "Paris", "Rome", "Madrid"],
-    answer: "Paris"
-  },
-  {
-    question: "Which language runs in the browser?",
-    options: ["Python", "Java", "C++", "JavaScript"],
-    answer: "JavaScript"
-  },
-  {
-    question: "What is 2 + 2?",
-    options: ["3", "4", "5", "6"],
-    answer: "4"
-  }
-];
+            {
+                question: "Which programming language is primarily used for web development?",
+                options: ["Java", "Python", "JavaScript", "C++"],
+                correct: 2
+            },
+            {
+                question: "What does CSS stand for?",
+                options: ["Computer Style Sheets", "Creative Style Sheets", 
+                         "Cascading Style Sheets", "Colorful Style Sheets"],
+                correct: 2
+            },
+            {
+                question: "Which of these is not a JavaScript framework?",
+                options: ["React", "Angular", "Laravel", "Vue"],
+                correct: 2
+            },
+            {
+                question: "What is the latest version of HTML?",
+                options: ["HTML4", "XHTML", "HTML5", "HTML2019"],
+                correct: 2
+            },
+            {
+                question: "Which tag is used to link a JavaScript file?",
+                options: ["<script>", "<javascript>", "<js>", "<scripting>"],
+                correct: 0
+            }
+        ];
 
-let currentQuestion = 0;
-let score = 0;
-let time = 10;
-let timerInterval;
+        let currentQuestion = 0;
+        let score = 0;
+        const questionElement = document.getElementById("question");
+        const optionsContainer = document.getElementById("options-container");
+        const nextBtn = document.getElementById("next-btn");
+        const resultContainer = document.getElementById("result-container");
+        const currentQuestionElement = document.getElementById("current-question");
+        const totalQuestionsElement = document.getElementById("total-questions");
+        const scoreElement = document.getElementById("score");
+        const finalScoreElement = document.getElementById("final-score");
+        const totalElement = document.getElementById("total");
 
-const questionEl = document.getElementById("question");
-const answersEl = document.getElementById("answers");
-const timerEl = document.getElementById("time");
-const scoreEl = document.getElementById("score");
-const nextBtn = document.getElementById("next-btn");
+        function startQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            scoreElement.textContent = score;
+            document.querySelector(".quiz-body").style.display = "block";
+            resultContainer.style.display = "none";
+            showQuestion();
+        }
 
-function loadQuestion() {
-  clearInterval(timerInterval);
-  time = 10;
-  timerEl.textContent = time;
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            questionElement.textContent = question.question;
+            optionsContainer.innerHTML = "";
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.classList.add("option-btn");
+                button.addEventListener("click", () => checkAnswer(index));
+                optionsContainer.appendChild(button);
+            });
 
-  const q = questions[currentQuestion];
-  questionEl.textContent = q.question;
-  answersEl.innerHTML = "";
+            currentQuestionElement.textContent = currentQuestion + 1;
+            totalQuestionsElement.textContent = questions.length;
+            totalElement.textContent = questions.length;
+        }
 
-  q.options.forEach(option => {
-    const li = document.createElement("li");
-    li.textContent = option;
-    li.onclick = () => checkAnswer(option);
-    answersEl.appendChild(li);
-  });
+        function checkAnswer(selectedIndex) {
+            const question = questions[currentQuestion];
+            const options = optionsContainer.children;
+            
+            if (selectedIndex === question.correct) {
+                options[selectedIndex].classList.add("correct");
+                score++;
+                scoreElement.textContent = score;
+            } else {
+                options[selectedIndex].classList.add("wrong");
+                options[question.correct].classList.add("correct");
+            }
 
-  startTimer();
-}
+            Array.from(options).forEach(button => {
+                button.disabled = true;
+            });
 
-function startTimer() {
-  timerInterval = setInterval(() => {
-    time--;
-    timerEl.textContent = time;
-    if (time === 0) {
-      clearInterval(timerInterval);
-      disableOptions();
-    }
-  }, 1000);
-}
+            nextBtn.style.display = "block";
+        }
 
-function checkAnswer(selected) {
-  clearInterval(timerInterval);
-  const correct = questions[currentQuestion].answer;
-  const allOptions = document.querySelectorAll("#answers li");
+        function showNextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+                nextBtn.style.display = "none";
+            } else {
+                showResult();
+            }
+        }
 
-  allOptions.forEach(li => {
-    li.style.pointerEvents = "none";
-    if (li.textContent === correct) {
-      li.style.background = "lightgreen";
-    } else if (li.textContent === selected) {
-      li.style.background = "salmon";
-    }
-  });
+        function showResult() {
+            document.querySelector(".quiz-body").style.display = "none";
+            resultContainer.style.display = "block";
+            finalScoreElement.textContent = score;
+        }
 
-  if (selected === correct) {
-    score++;
-    scoreEl.textContent = "Score: " + score;
-  }
-}
-
-function disableOptions() {
-  document.querySelectorAll("#answers li").forEach(li => {
-    li.style.pointerEvents = "none";
-  });
-}
-
-nextBtn.onclick = () => {
-  currentQuestion++;
-  if (currentQuestion < questions.length) {
-    loadQuestion();
-  } else {
-    endQuiz();
-  }
-};
-
-function endQuiz() {
-  questionEl.textContent = "Quiz Finished!";
-  answersEl.innerHTML = "";
-  timerEl.textContent = "0";
-  nextBtn.disabled = true;
-}
-
-loadQuestion();
+        nextBtn.addEventListener("click", showNextQuestion);
+        startQuiz(); // Initialize the quiz
