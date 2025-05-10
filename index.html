@@ -7,12 +7,24 @@
 </head>
 <body>
   <div class="quiz-container">
-    <h2 id="question">Question text</h2>
-    <ul id="answers"></ul>
-    <p id="timer">Time left: <span id="time">10</span>s</p>
-    <p id="score">Score: 0</p>
-    <button id="next-btn">Next</button>
-  </div>
+        <div class="quiz-header">
+            <div class="question-number">Question: <span id="current-question">1</span>/<span id="total-questions">5</span></div>
+            <div class="score">Score: <span id="score">0</span></div>
+        </div>
+
+        <div class="quiz-body">
+            <div class="question" id="question"></div>
+            <div class="options-container" id="options-container"></div>
+            <button class="next-btn" id="next-btn">Next Question</button>
+        </div>
+
+        <div class="result-container" id="result-container">
+            <h2>Quiz Completed!</h2>
+            <p>Your final score is <span id="final-score">0</span>/<span id="total">5</span></p>
+            <button class="restart-btn" onclick="startQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
 
   <script src="script.js"></script>
 </body>
